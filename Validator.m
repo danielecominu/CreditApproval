@@ -40,6 +40,5 @@ function vEnc = oneHotEncoding(V)
 
     X = unique(V);
     [~, loc] = ismember(V, X); %per ogni elemento, mi prendo l'indice.
-    %vEnc = double(bsxfun(@eq, loc, 1:size(X)));
     vEnc = double(loc == 1:size(X));
 end
