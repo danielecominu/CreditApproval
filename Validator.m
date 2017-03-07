@@ -15,6 +15,21 @@ function Validator()
    
    designMatrix = [stdNumeric, oh_b, oh_f, oh_g, oh_g1, oh_t, oh_t1, oh_u, oh_v, oh_w];
    stdY = editY(M.VarName16);
+   
+   % pseudoQuadratic poich? tutte le istanze che per y hanno '-', per la
+   % feature g hanno un valore diverso da gg, dunque la varianza di tale
+   % insieme ? nulla
+   result = fitcdiscr(designMatrix, stdY, 'DiscrimType', 'pseudoQuadratic')
+   ee = crossval(result)
+   allQDA = kfoldLoss(ee, 'mode', 'individual')
+   avgQDA = mean(allQDA)
+   
+   result = fitcdiscr(designMatrix, stdY)
+   ee = crossval(result)
+   allLDA = kfoldLoss(ee, 'mode', 'individual')
+   avgLDA = mean(allLDA)
+   
+   
 end
 
 function [stdMatrix] = standardize(X)
