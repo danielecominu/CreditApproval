@@ -19,16 +19,26 @@ function Validator()
    % pseudoQuadratic poich? tutte le istanze che per y hanno '-', per la
    % feature g hanno un valore diverso da gg, dunque la varianza di tale
    % insieme ? nulla
-   result = fitcdiscr(designMatrix, stdY, 'DiscrimType', 'pseudoQuadratic')
-   ee = crossval(result)
-   allQDA = kfoldLoss(ee, 'mode', 'individual')
+   result = fitcdiscr(designMatrix, stdY, 'DiscrimType', 'pseudoQuadratic');
+   ee = crossval(result);
+   allQDA = kfoldLoss(ee, 'mode', 'individual');
    avgQDA = mean(allQDA)
    
-   result = fitcdiscr(designMatrix, stdY)
-   ee = crossval(result)
-   allLDA = kfoldLoss(ee, 'mode', 'individual')
+   result = fitcdiscr(designMatrix, stdY);
+   ee = crossval(result);
+   allLDA = kfoldLoss(ee, 'mode', 'individual');
    avgLDA = mean(allLDA)
    
+   trainingSize = 550
+   
+   trainingX = designMatrix(1:trainingSize, :);
+   trainingY = stdY(1:trainingSize);
+   testX = designMatrix(trainingSize:end, :);
+   testY = stdY(trainingSize:end);
+   
+   model = logregFit(trainingX, trainingY);
+   [yhat, prob] = logregPredict(model, testX);
+   errRateLogReg = 1 - (sum(yhat == testY)/rows(testY))
    
 end
 
