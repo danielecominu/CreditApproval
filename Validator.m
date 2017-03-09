@@ -44,22 +44,22 @@ function Validator()
    
   LOGREG = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST);
    
-   ls = linspace(0,20,500);
-   %NOREG
+
    allLogReg = crossval(LOGREG, designMatrix, stdY);
    avgLogReg = mean(allLogReg)
    
+   ls = linspace(0,20,500);
    best = 0;
    avgLogRegR = 1;
    for i=1:500
-       allLogReg = cvLambda(designMatrix, stdY, ls(i));
-       if(allLogReg < avgLogRegR)
+       cvL = cvLambda(designMatrix, stdY, ls(i));
+       if(cvL < avgLogRegR)
            best = ls(i);
-           avgLogRegR = allLogReg;
+           avgLogRegR = cvL;
        end
    end
    avgLogRegR
-  
+
 end
 
 function errRate = logReg(trainingX, trainingY, testX, testY)
