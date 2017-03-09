@@ -29,16 +29,31 @@ function Validator()
    allLDA = kfoldLoss(ee, 'mode', 'individual');
    avgLDA = mean(allLDA)
    
-   trainingSize = 550
+   % trainingSize = 550
    
-   trainingX = designMatrix(1:trainingSize, :);
-   trainingY = stdY(1:trainingSize);
-   testX = designMatrix(trainingSize:end, :);
-   testY = stdY(trainingSize:end);
+   % trainingX = designMatrix(1:trainingSize, :);
+   % trainingY = stdY(1:trainingSize);
+   % testX = designMatrix(trainingSize:end, :);
+   % testY = stdY(trainingSize:end);
    
+   % model = logregFit(trainingX, trainingY);
+   % [yhat, prob] = logregPredict(model, testX);
+   % errRateLogReg = 1 - (sum(yhat == testY)/rows(testY))
+   
+   % using 10-fold cross validation
+   
+  LOGREG = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST);
+   
+   allLogReg = crossval(LOGREG, designMatrix, stdY);
+   avgLogReg = mean(allLogReg)
+   
+end
+
+function errRate = logReg(trainingX, trainingY, testX, testY)
+    
    model = logregFit(trainingX, trainingY);
    [yhat, prob] = logregPredict(model, testX);
-   errRateLogReg = 1 - (sum(yhat == testY)/rows(testY))
+   errRate = 1 - (sum(yhat == testY)/rows(testY));
    
 end
 
