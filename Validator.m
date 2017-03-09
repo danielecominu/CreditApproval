@@ -29,17 +29,70 @@ function Validator()
    allLDA = kfoldLoss(ee, 'mode', 'individual');
    avgLDA = mean(allLDA)
    
-   trainingSize = 550
+   % trainingSize = 550
    
-   trainingX = designMatrix(1:trainingSize, :);
-   trainingY = stdY(1:trainingSize);
-   testX = designMatrix(trainingSize:end, :);
-   testY = stdY(trainingSize:end);
+   % trainingX = designMatrix(1:trainingSize, :);
+   % trainingY = stdY(1:trainingSize);
+   % testX = designMatrix(trainingSize:end, :);
+   % testY = stdY(trainingSize:end);
    
+   % model = logregFit(trainingX, trainingY);
+   % [yhat, prob] = logregPredict(model, testX);
+   % errRateLogReg = 1 - (sum(yhat == testY)/rows(testY))
+   
+   % using 10-fold cross validation
+   
+  LOGREG = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST);
+   
+   ls = linspace(0,20,500);
+   %NOREG
+   allLogReg = crossval(LOGREG, designMatrix, stdY);
+   avgLogReg = mean(allLogReg)
+   
+   best = 0;
+   avgLogRegR = 1;
+   for i=1:500
+       allLogReg = cvLambda(designMatrix, stdY, ls(i));
+       if(allLogReg < avgLogRegR)
+           best = ls(i);
+           avgLogRegR = allLogReg;
+       end
+   end
+   avgLogRegR
+  
+end
+
+function errRate = logReg(trainingX, trainingY, testX, testY)
+    
    model = logregFit(trainingX, trainingY);
    [yhat, prob] = logregPredict(model, testX);
-   errRateLogReg = 1 - (sum(yhat == testY)/rows(testY))
+   errRate = 1 - (sum(yhat == testY)/rows(testY));
    
+end
+
+function errRate = cvLambda(X,Y,lambda) 
+    % partition data into 10 folds
+    K = 10;
+    cv = cvpartition(numel(Y), 'kfold',K);
+
+    err = zeros(K,1);
+    for k=1:K
+        % training/testing indices for this fold
+        trainIdx = cv.training(k);
+        testIdx = cv.test(k);
+
+        trainingX = X(trainIdx,:);
+        trainingY = Y(trainIdx,:);
+        testX = X(testIdx,:);
+        testY = Y(testIdx,:);
+        
+        model = logregFit(trainingX, trainingY, 'regType', 'L2', 'lambda', lambda);
+        [yhat, prob] = logregPredict(model, testX);
+        err(k) = 1 - (sum(yhat == testY)/rows(testY));
+    end
+
+    % average errRate across k-folds
+    errRate = mean((err));
 end
 
 function [stdMatrix] = standardize(X)
@@ -49,7 +102,7 @@ function [stdMatrix] = standardize(X)
     m = size(X, 1);            % returns the number of rows in X
     mu_matrix = ones(m, 1) * mu;  
     sigma_matrix = ones(m, 1) * sigma;
-    stdMatrix = X; %copia profonda (?)
+    stdMatrix = X;
     stdMatrix = bsxfun(@minus, stdMatrix, mu_matrix);
     stdMatrix = bsxfun(@rdivide, stdMatrix, sigma_matrix);
 end
