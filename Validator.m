@@ -16,18 +16,37 @@ function Validator()
    designMatrix = [stdNumeric, oh_b, oh_f, oh_g, oh_g1, oh_t, oh_t1, oh_u, oh_v, oh_w];
    stdY = editY(M.VarName16);
    
+   
+   % -------- Linear Discriminant Analysis --------------------------------
+   
+   result = fitcdiscr(designMatrix, stdY);
+   ee = crossval(result);
+   allLDA = kfoldLoss(ee, 'mode', 'individual');
+   avgLDA = mean(allLDA);
+   
+   disp('-------- Linear Discriminant Analysis --------------------------------');
+   fprintf('\n\terror rate:\t%f\n\n',avgLDA);
+   fprintf('----------------------------------------------------------------------\n\n');
+   
+   % ----------------------------------------------------------------------
+   
+   
+   % -------- Quadratic Discriminant Analysis -----------------------------
+   
    % pseudoQuadratic poich? tutte le istanze che per y hanno '-', per la
    % feature g hanno un valore diverso da gg, dunque la varianza di tale
    % insieme ? nulla
    result = fitcdiscr(designMatrix, stdY, 'DiscrimType', 'pseudoQuadratic');
    ee = crossval(result);
    allQDA = kfoldLoss(ee, 'mode', 'individual');
-   avgQDA = mean(allQDA)
+   avgQDA = mean(allQDA);
    
-   result = fitcdiscr(designMatrix, stdY);
-   ee = crossval(result);
-   allLDA = kfoldLoss(ee, 'mode', 'individual');
-   avgLDA = mean(allLDA)
+   disp('-------- Quadratic Discriminant Analysis -----------------------------');
+   fprintf('\n\terror rate:\t%f\n\n',avgQDA);
+   fprintf('----------------------------------------------------------------------\n\n');
+   
+   % ----------------------------------------------------------------------
+   
    
    % trainingSize = 550
    
@@ -42,11 +61,40 @@ function Validator()
    
    % using 10-fold cross validation
    
+   
+   
   LOGREG = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST);
    
 
+   % -------- Logistic Regression with Linear Decision Boundary -----------
+   
    allLogReg = crossval(LOGREG, designMatrix, stdY);
-   avgLogReg = mean(allLogReg)
+   avgLogReg = mean(allLogReg);
+   
+   disp('-------- Logistic Regression with Linear Decision Boundary -----------');
+   fprintf('\n\terror rate:\t%f\n\n',avgLogReg);
+   fprintf('----------------------------------------------------------------------\n\n');
+   % ----------------------------------------------------------------------
+   
+   
+   % -------- Logistic Regression with Quadratic Decision Boundary --------
+   
+   designMatrix2 = designMatrix;
+   for i=1:46
+       col = designMatrix(:, i);
+       matr = col(:, ones(1, 46-i+1));
+       quadMatrix = designMatrix(:, i:46).*matr;
+       designMatrix2 = [designMatrix2, quadMatrix];
+   end
+   
+   allLogReg2 = crossval(LOGREG, designMatrix2, stdY);
+   avgLogReg2 = mean(allLogReg2);
+   
+   disp('-------- Logistic Regression with Quadratic Decision Boundary --------');
+   fprintf('\n\terror rate:\t%f\n\n',avgLogReg2);
+   fprintf('----------------------------------------------------------------------\n\n');
+   
+   % ----------------------------------------------------------------------
    
    ls = linspace(0,20,500);
    best = 0;
