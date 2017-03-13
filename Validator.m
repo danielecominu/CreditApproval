@@ -16,6 +16,53 @@ function Validator()
    designMatrix = [stdNumeric, oh_b, oh_f, oh_g, oh_g1, oh_t, oh_t1, oh_u, oh_v, oh_w];
    stdY = editY(M.VarName16);
    
+   numFeatures = 5;
+   padding = 0.5;
+   margin = 0.005;
+   pointSize = 3;
+   f = 0;
+   
+   stdFeatures = [stdNumeric toNumber(M.b) toNumber(M.f) toNumber(M.g)];
+   
+   for i=1:numFeatures
+        for j=1:numFeatures
+            subplot('Position', [(i-1)/numFeatures+margin 1-(j)/numFeatures+margin 1/numFeatures-2*margin 1/numFeatures-2*margin])
+            if(i == j)
+                gscatter([-900 800]', [800 -400], [0 1], 'gb', '..', pointSize, 'off')
+            else
+                gscatter(stdFeatures(:,i+f), stdFeatures(:,j+f), stdY, 'rb','..', pointSize, 'off')
+            end
+            axis([min(stdFeatures(:, i+f))-padding max(stdFeatures(:,i+f))+padding min(stdFeatures(:, j+f))-padding max(stdFeatures(:,j+f))+padding])
+            set(gca,'YTick',[]);
+            set(gca,'XTick',[]);
+            
+            %title(sprintf('%d -- %d', i,j))
+        end
+   end
+   
+   %return
+   
+   %{
+   for i=1:6
+        scatter(stdNumeric(:, i), stdY)
+        title(sprintf('Feature %d', i))
+        figure
+   end
+   %}
+   
+   % -------- Linear Discriminant Analysis --------------------------------
+   
+   result = fitcdiscr(designMatrix, stdY, 'DiscrimType', 'diagLinear');
+   ee = crossval(result);
+   allDLDA = kfoldLoss(ee, 'mode', 'individual');
+   avgDLDA = mean(allDLDA);
+   
+   disp('-------- Diagonal Linear Discriminant Analysis --------------------------------');
+   fprintf('\n\terror rate:\t%f\n\n',avgDLDA);
+   fprintf('----------------------------------------------------------------------\n\n');
+   
+   % ----------------------------------------------------------------------
+   
    
    % -------- Linear Discriminant Analysis --------------------------------
    
@@ -60,10 +107,9 @@ function Validator()
    % errRateLogReg = 1 - (sum(yhat == testY)/rows(testY))
    
    % using 10-fold cross validation
+   %}
    
-   
-   
-  LOGREG = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST);
+  LOGREG = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST, 0);
    
 
    % -------- Logistic Regression with Linear Decision Boundary -----------
@@ -75,7 +121,6 @@ function Validator()
    fprintf('\n\terror rate:\t%f\n\n',avgLogReg);
    fprintf('----------------------------------------------------------------------\n\n');
    % ----------------------------------------------------------------------
-   
    
    % -------- Logistic Regression with Quadratic Decision Boundary --------
    
@@ -96,23 +141,67 @@ function Validator()
    
    % ----------------------------------------------------------------------
    
+   
+   
+   % Logistic Regression with Linear Decision Boundary and Regularization -
+   
    ls = linspace(0,20,500);
    best = 0;
    avgLogRegR = 1;
    for i=1:500
-       cvL = cvLambda(designMatrix, stdY, ls(i));
+       
+       logRegLambda = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST, ls(i));
+   
+       allLogRegR = crossval(logRegLambda, designMatrix, stdY);
+       cvL = mean(allLogRegR);
+       
+       %cvL = cvLambda(designMatrix, stdY, ls(i));
        if(cvL < avgLogRegR)
            best = ls(i);
            avgLogRegR = cvL;
        end
    end
    avgLogRegR
-
+   % ----------------------------------------------------------------------
+   
+   
+   % Logistic Regression with Quadratic Decision Boundary and Regularization
+   
+   ls = linspace(15,17,10);
+   best = 0;
+   avgLogRegR = 1;
+   for i=1:10
+       
+       logRegLambda = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST, ls(i));
+   
+       allLogRegR = crossval(logRegLambda, designMatrix2, stdY);
+       cvL = mean(allLogRegR);
+       
+       %cvL = cvLambda(designMatrix, stdY, ls(i));
+       if(cvL < avgLogRegR)
+           best = ls(i);
+           avgLogRegR = cvL;
+       end
+   end
+   avgLogRegR
+   % ----------------------------------------------------------------------
+   
+    
+   %{
+   trainingSize = 550;
+   
+   trainingX = designMatrix2(1:trainingSize, :);
+   trainingY = stdY(1:trainingSize);
+   testX = designMatrix2(trainingSize:end, :);
+   testY = stdY(trainingSize:end);
+   
+   logReg(trainingX, trainingY, testX, testY, 15.22);   
+   %}
 end
 
-function errRate = logReg(trainingX, trainingY, testX, testY)
+function errRate = logReg(trainingX, trainingY, testX, testY, lambda)
     
-   model = logregFit(trainingX, trainingY);
+   model = logregFit(trainingX, trainingY, 'regType', 'L2', 'lambda', lambda);
    [yhat, prob] = logregPredict(model, testX);
    errRate = 1 - (sum(yhat == testY)/rows(testY));
    
@@ -160,6 +249,11 @@ function [new_y] = editY(Y)
     new_y = [];
     Y = cell2mat(Y);
     new_y = Y == '+';
+end
+
+function vEnc = toNumber(V) 
+    X = unique(V);
+    [~, vEnc] = ismember(V, X); %per ogni elemento, mi prendo l'indice.
 end
 
 function vEnc = oneHotEncoding(V)
