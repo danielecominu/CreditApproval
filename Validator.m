@@ -16,6 +16,21 @@ function Validator()
    designMatrix = [stdNumeric, oh_b, oh_f, oh_g, oh_g1, oh_t, oh_t1, oh_u, oh_v, oh_w];
    stdY = editY(M.VarName16);
    
+   % Principal Component Analysis
+   [coeff, newDesignMatrix, pcVariance] = pca(designMatrix);
+   
+   plot(1:size(pcVariance), pcVariance)
+   set(gca,'XTick',1:size(pcVariance));
+   figure
+   
+   gscatter(newDesignMatrix(:, 1), newDesignMatrix(:, 2), stdY, 'rb','..', 7, 'off')
+   figure
+   
+   % 0.1179
+   designMatrix = newDesignMatrix(:, 1:26);
+   
+   [~, features] = size(designMatrix);
+   
    numFeatures = 5;
    padding = 0.5;
    margin = 0.005;
@@ -125,10 +140,10 @@ function Validator()
    % -------- Logistic Regression with Quadratic Decision Boundary --------
    
    designMatrix2 = designMatrix;
-   for i=1:46
+   for i=1:features
        col = designMatrix(:, i);
-       matr = col(:, ones(1, 46-i+1));
-       quadMatrix = designMatrix(:, i:46).*matr;
+       matr = col(:, ones(1, features-i+1));
+       quadMatrix = designMatrix(:, i:features).*matr;
        designMatrix2 = [designMatrix2, quadMatrix];
    end
    
