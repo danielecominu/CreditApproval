@@ -2,7 +2,6 @@ function Validator()
     
    M = load('dati.mat'); 
    Numeric = [M.VarName11 M.VarName14 M.VarName15 M.VarName2 M.VarName3 M.VarName8];
-   stdNumeric = standardize(Numeric);
    oh_b = oneHotEncoding(M.b);
    oh_f = oneHotEncoding(M.f);
    oh_g = oneHotEncoding(M.g);
@@ -13,21 +12,41 @@ function Validator()
    oh_v = oneHotEncoding(M.v);
    oh_w = oneHotEncoding(M.w);
    
-   designMatrix = [stdNumeric, oh_b, oh_f, oh_g, oh_g1, oh_t, oh_t1, oh_u, oh_v, oh_w];
+   designMatrix = [Numeric, oh_b, oh_f, oh_g, oh_g1, oh_t, oh_t1, oh_u, oh_v, oh_w];
+   designMatrix = standardize(designMatrix);
    stdY = editY(M.VarName16);
    
    % Principal Component Analysis
    [coeff, newDesignMatrix, pcVariance] = pca(designMatrix);
    
+   pcVariance = pcVariance ./ (pcVariance(1, 1)*5);
+   
    plot(1:size(pcVariance), pcVariance)
+   hold on
+   scatter( [20     24      25      26      27      28      29      30      31      32      33      34      35      46], ...
+            [0.1270 0.1224  0.1179  0.1179  0.1163  0.1149  0.1195  0.1193  0.1178  0.1178  0.1162  0.1194  0.1194  0.1210])
    set(gca,'XTick',1:size(pcVariance));
+   
+   hold off
    figure
    
    gscatter(newDesignMatrix(:, 1), newDesignMatrix(:, 2), stdY, 'rb','..', 7, 'off')
-   figure
    
-   % 0.1179
-   designMatrix = newDesignMatrix(:, 1:26);
+   % 20 -> 0.1270
+   % 24 -> 0.1224
+   % 25 -> 0.1179
+   % 26 -> 0.1179
+   % 27 -> 0.1163
+   % 28 -> 0.1149
+   % 29 -> 0.1195
+   % 30 -> 0.1193
+   % 31 -> 0.1178
+   % 32 -> 0.1178
+   % 33 -> 0.1162
+   % 34 -> 0.1194
+   % 35 -> 0.1194
+   % without pca -> 0.1210
+   designMatrix = newDesignMatrix(:, 1:28);
    
    [~, features] = size(designMatrix);
    
@@ -37,17 +56,15 @@ function Validator()
    pointSize = 3;
    f = 0;
    
-   stdFeatures = [stdNumeric toNumber(M.b) toNumber(M.f) toNumber(M.g)];
-   
    for i=1:numFeatures
         for j=1:numFeatures
             subplot('Position', [(i-1)/numFeatures+margin 1-(j)/numFeatures+margin 1/numFeatures-2*margin 1/numFeatures-2*margin])
             if(i == j)
                 gscatter([-900 800]', [800 -400], [0 1], 'gb', '..', pointSize, 'off')
             else
-                gscatter(stdFeatures(:,i+f), stdFeatures(:,j+f), stdY, 'rb','..', pointSize, 'off')
+                gscatter(designMatrix(:,i+f), designMatrix(:,j+f), stdY, 'rb','..', pointSize, 'off')
             end
-            axis([min(stdFeatures(:, i+f))-padding max(stdFeatures(:,i+f))+padding min(stdFeatures(:, j+f))-padding max(stdFeatures(:,j+f))+padding])
+            axis([min(designMatrix(:, i+f))-padding max(designMatrix(:,i+f))+padding min(designMatrix(:, j+f))-padding max(designMatrix(:,j+f))+padding])
             set(gca,'YTick',[]);
             set(gca,'XTick',[]);
             
