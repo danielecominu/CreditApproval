@@ -1,0 +1,59 @@
+% !TEX encoding = UTF-8 Unicode
+% !TeX spellcheck = it
+\documentclass[a4paper,8pt]{article}
+\usepackage[italian]{babel}
+\usepackage{blindtext}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage{multicol}
+\usepackage[none]{hyphenat}
+\usepackage{hyperref}
+\usepackage[margin={3cm,1cm}]{geometry}
+\usepackage{titlesec}
+
+\setlength{\columnsep}{1cm}
+
+\hypersetup{
+	colorlinks=true,
+	allcolors=[rgb]{0.376,0.49,0.54}
+	%urlcolor=[rgb]{0,0,0}
+}
+
+\titleformat{\section}
+{\normalfont\bfseries}
+{\thesection.}{1em}{}
+
+\begin{document}
+\title{Comparazione di classificatori in Credit Card Approval}
+\author{Valerio Colitta, Daniele Cominu, Alessio Fiorenza}
+\date{Aprile 2017}
+\maketitle
+
+\begin{multicols}{2}
+
+\section{Descrizione preliminare}
+Volendo approfondire i metodi e le tecniche di classificazione affrontate nel corso di Metodi Quantitativi per l'Informatica, abbiamo deciso di confrontarli risolvendo il problema presentato in \emph{Credit Approval Data Set} \cite{Dataset}; abbiamo deciso di utilizzare modelli di diverse complessità ed abbiamo osservato che data la conformazione dei dati e la loro dimensione ridotta, si ottengono risultati migliori con modelli meno complessi. 
+
+\section{Il dataset}
+Il dataset riguarda delle domande di approvazione di carte di credito, ed e' composto da 690 campioni, 37 dei quali con valori mancanti. Sono presenti in totale 15 feature, le quali si articolano in 6 continue e 9 categoriche. Tali dati sono poi classificati in due classi \{+, -\} che rappresentano rispettivamente l'approvazione o meno della carta di credito.
+Il significato delle 15 feature non è noto per poter mantenere la confidenzialità dei dati.
+
+\section{Manipolazione dei dati}
+Come prima cosa sono stati eliminati manualmente dal dataset i 37 campioni di cui non erano stati specificate alcune feature, riducendo ulteriormente la dimensione del dataset a 653 campioni.\\
+Per superare l'eterogeneità nella tipologia delle feature, si è deciso di applicare la tecnica del \emph{One Hot Encoding} \cite{OneHotEncoding} per le feature categoriche; l'\emph{One Hot Encoding} è una tecnica utilizzata per trattare feature categoriche in problemi di classificazione e regressione, e consiste nel tradurre una feature categorica che può assumere \emph{n} valori distinti in un vettore di \emph{n} feature binarie; per ogni campione la feature i-esima del vettore calcolato assume il valore 1 se e solo se il campione assume il valore i-esimo per la feature considerata; le restanti \emph{n} -1 sono dunque settate a 0 per tale campione.
+
+
+\end{multicols}
+
+\begin{thebibliography}{10}
+\bibitem{Dataset}
+	John Ross Quinlan \\
+	\emph{Credit Approval Data Set} \\
+	\url{http://archive.ics.uci.edu/ml/datasets/Credit+Approval}
+\bibitem{OneHotEncoding}
+	Håkon Hapnes Strand \\
+	\emph{One Hot Encoding} \\
+	\url{https://www.quora.com/What-is-one-hot-encoding-and-when-is-it-used-in-data-science}
+	
+\end{thebibliography}
+\end{document}
