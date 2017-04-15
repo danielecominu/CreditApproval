@@ -37,7 +37,7 @@ function Validator()
     err = 1 - (sum(yhat == testY)/rows(testY));
     
     fprintf("Final error after training the whole dataset is %f\n", err)
-return   
+   %return
    % itero diverse volte gli algoritmi con dataset diversi
    for j=1:EXECUTIONS
        
@@ -102,6 +102,7 @@ return
    figure
    
    
+   
    [~, features] = size(designMatrix);
    
    numFeatures = 5;
@@ -125,6 +126,7 @@ return
             %title(sprintf('%d -- %d', i,j))
         end
    end
+   
    
     model = logregFit(trainingX, trainingY, 'regType', 'L2', 'lambda', LFM);
     [yhat, prob] = logregPredict(model, testX);
