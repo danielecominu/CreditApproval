@@ -1,52 +1,106 @@
 function Validator()
+
+    global DEBUG
+    DEBUG = 1;
     
-   M = load('dati.mat'); 
-   Numeric = [M.VarName11 M.VarName14 M.VarName15 M.VarName2 M.VarName3 M.VarName8];
-   oh_b = oneHotEncoding(M.b);
-   oh_f = oneHotEncoding(M.f);
-   oh_g = oneHotEncoding(M.g);
-   oh_g1 = oneHotEncoding(M.g1);
-   oh_t = oneHotEncoding(M.t);
-   oh_t1 = oneHotEncoding(M.t1);
-   oh_u = oneHotEncoding(M.u);
-   oh_v = oneHotEncoding(M.v);
-   oh_w = oneHotEncoding(M.w);
+    if DEBUG == 0
+        warning('off','last');
+    end
+    
+   close all;
+    
+   [X, Y] = loadData();
    
-   designMatrix = [Numeric, oh_b, oh_f, oh_g, oh_g1, oh_t, oh_t1, oh_u, oh_v, oh_w];
-   designMatrix = standardize(designMatrix);
-   stdY = editY(M.VarName16);
+   START_PCA = 35;
+   END_PCA = 35;
+   
+   EXECUTIONS = 10;
+   
+   POINT_SIZE = 10;
    
    % Principal Component Analysis
-   [coeff, newDesignMatrix, pcVariance] = pca(designMatrix);
+   [coeff, X, pcVariance] = pca(X);
    
    pcVariance = pcVariance ./ (pcVariance(1, 1)*5);
    
-   plot(1:size(pcVariance), pcVariance)
+  % plot(1:size(pcVariance), pcVariance)
    hold on
-   scatter( [20     24      25      26      27      28      29      30      31      32      33      34      35      46], ...
-            [0.1270 0.1224  0.1179  0.1179  0.1163  0.1149  0.1195  0.1193  0.1178  0.1178  0.1162  0.1194  0.1194  0.1210])
-   set(gca,'XTick',1:size(pcVariance));
    
-   hold off
+   errRates = ones(16, 7, 5);
+   
+   LFM = 0;
+   EFM = 1;
+   
+    [tvX, stdY, testX, testY] = divide(X, Y); 
+    model = logregFit(tvX, stdY, 'regType', 'L2', 'lambda', 20);
+    [yhat, prob] = logregPredict(model, testX);
+    err = 1 - (sum(yhat == testY)/rows(testY));
+    
+    fprintf("Final error after training the whole dataset is %f\n", err)
+return   
+   % itero diverse volte gli algoritmi con dataset diversi
+   for j=1:EXECUTIONS
+       
+       % per ottenere sempre dati diversi applico ogni volta una
+       % permutazione casuale e prendo solo i primi nonTestSamples samples
+       [tvX, stdY, ~, ~] = divide(X, Y); 
+       
+       for c=START_PCA:END_PCA
+   %scatter( [20     24      25      26      27      28      29      30      31      32      33      34      35      46], ...
+   %         [0.1270 0.1224  0.1179  0.1179  0.1163  0.1149  0.1195  0.1193  0.1178  0.1178  0.1162  0.1194  0.1194  0.1210])
+   %set(gca,'XTick',1:size(pcVariance));
+   
+   %hold off
+   %figure
+   
+   %gscatter(newDesignMatrix(:, 1), newDesignMatrix(:, 2), stdY, 'rb','..', 7, 'off')
+   
+            fprintf('run n?: %d, n? features: %d\n', j, c)
+   
+            designMatrix = tvX(:, 1:c);
+    
+            errRates(c-START_PCA+1, 1, j) = DLDA(designMatrix, stdY);
+            errRates(c-START_PCA+1, 2, j) = LDA(designMatrix, stdY);
+            errRates(c-START_PCA+1, 3, j) = QDA(designMatrix, stdY);
+            errRates(c-START_PCA+1, 4, j) = LLogReg(designMatrix, stdY);
+            errRates(c-START_PCA+1, 5, j) = QLogReg(designMatrix, stdY);
+            [errRates(c-START_PCA+1, 6, j), cLambda] = LLogRegReg(designMatrix, stdY);
+            errRates(c-START_PCA+1, 7, j) = QLogRegReg(designMatrix, stdY);
+            
+            if(errRates(c-START_PCA+1, 6, j) < EFM)
+                EFM = errRates(c-START_PCA+1, 6, j);
+                LFM = cLambda;
+            end
+            
+            gscatter(ones(7, 1).*c, errRates(c-START_PCA+1, :, j), 1:7, 'ymcrgbk','.......', POINT_SIZE, 'off')
+        
+       end
+   end
+   
+   VARIANCE_POINT_SIZE = 2400;
+   
+   for c=START_PCA:END_PCA
+       err_rates = squeeze(errRates(c-START_PCA+1, :, :))';
+       mean_ = mean(err_rates);
+       std_ = std(err_rates);
+       
+       gscatter(c, mean_(1), 1, 'y', 'o', VARIANCE_POINT_SIZE*std_(1), 'off');
+       gscatter(c, mean_(2), 2, 'm', 'o', VARIANCE_POINT_SIZE*std_(2), 'off');
+       gscatter(c, mean_(3), 3, 'c', 'o', VARIANCE_POINT_SIZE*std_(3), 'off');
+       gscatter(c, mean_(4), 4, 'r', 'o', VARIANCE_POINT_SIZE*std_(4), 'off');
+       gscatter(c, mean_(5), 5, 'g', 'o', VARIANCE_POINT_SIZE*std_(5), 'off');
+       gscatter(c, mean_(6), 6, 'b', 'o', VARIANCE_POINT_SIZE*std_(6), 'off');
+       gscatter(c, mean_(7), 7, 'k', 'o', VARIANCE_POINT_SIZE*std_(7), 'off');
+   % gscatter(START_PCA:END_PCA, mean(err_rates)')
+   end
+   
+   set(gca,'XTick',1:size(pcVariance));
+   legend('Diagonal Linear Discriminant Analysis', 'Linear Discriminant Analysis', ...
+            'Quadratic Discriminant Analysis', 'Logistic Regression (Linear Boundary)', 'Logistic Regression (Quadratic Boundary)', ...
+            'Logistic Regression (Linear Boundary) with Regularization', 'Logistic Regression (Quadratic Boundary) with Regularization');
+   
    figure
    
-   gscatter(newDesignMatrix(:, 1), newDesignMatrix(:, 2), stdY, 'rb','..', 7, 'off')
-   
-   % 20 -> 0.1270
-   % 24 -> 0.1224
-   % 25 -> 0.1179
-   % 26 -> 0.1179
-   % 27 -> 0.1163
-   % 28 -> 0.1149
-   % 29 -> 0.1195
-   % 30 -> 0.1193
-   % 31 -> 0.1178
-   % 32 -> 0.1178
-   % 33 -> 0.1162
-   % 34 -> 0.1194
-   % 35 -> 0.1194
-   % without pca -> 0.1210
-   designMatrix = newDesignMatrix(:, 1:28);
    
    [~, features] = size(designMatrix);
    
@@ -72,109 +126,184 @@ function Validator()
         end
    end
    
-   %return
+    model = logregFit(trainingX, trainingY, 'regType', 'L2', 'lambda', LFM);
+    [yhat, prob] = logregPredict(model, testX);
+    err(k) = 1 - (sum(yhat == testY)/rows(testY));
+end
+
+function [designMatrix, stdY, testX, testY] = divide(X, Y)
+
+   samples = size(X, 1);
+
+    perm = randperm(samples);
+    X = X(perm, :);
+    Y = Y(perm, :);
+    
+    nonTestSamples = int64(samples*0.8);
+    testSamples = samples - nonTestSamples;
+        
+    testX = X(nonTestSamples:end, :);
+    designMatrix = X(1:nonTestSamples, :);
+    testY = Y(nonTestSamples:end, :);
+    stdY = Y(1:nonTestSamples, :);
+
+end
+
+function [designMatrix, stdY] = loadData()
+    
+   M = load('dati.mat'); 
+   Numeric = [M.VarName11 M.VarName14 M.VarName15 M.VarName2 M.VarName3 M.VarName8];
+   oh_b = oneHotEncoding(M.b);
+   oh_f = oneHotEncoding(M.f);
+   oh_g = oneHotEncoding(M.g);
+   oh_g1 = oneHotEncoding(M.g1);
+   oh_t = oneHotEncoding(M.t);
+   oh_t1 = oneHotEncoding(M.t1);
+   oh_u = oneHotEncoding(M.u);
+   oh_v = oneHotEncoding(M.v);
+   oh_w = oneHotEncoding(M.w);
    
-   %{
-   for i=1:6
-        scatter(stdNumeric(:, i), stdY)
-        title(sprintf('Feature %d', i))
-        figure
-   end
-   %}
-   
+   designMatrix = [Numeric, oh_b, oh_f, oh_g, oh_g1, oh_t, oh_t1, oh_u, oh_v, oh_w];
+   designMatrix = standardize(designMatrix);
+   stdY = editY(M.VarName16);
+
+end
+
+
+function errRate = DLDA(designMatrix, stdY)
+    
    % -------- Linear Discriminant Analysis --------------------------------
+    global DEBUG
    
    result = fitcdiscr(designMatrix, stdY, 'DiscrimType', 'diagLinear');
    ee = crossval(result);
-   allDLDA = kfoldLoss(ee, 'mode', 'individual');
+   allDLDA = kfoldLoss(ee, 'mode', 'individual', 'folds', 5);
    avgDLDA = mean(allDLDA);
    
-   disp('-------- Diagonal Linear Discriminant Analysis --------------------------------');
-   fprintf('\n\terror rate:\t%f\n\n',avgDLDA);
-   fprintf('----------------------------------------------------------------------\n\n');
+   if DEBUG
+        disp('-------- Diagonal Linear Discriminant Analysis --------------------------------');
+        fprintf('\n\terror rate:\t%f\n\n',avgDLDA);
+        fprintf('----------------------------------------------------------------------\n\n');
+   end
+   
+   errRate = avgDLDA;
    
    % ----------------------------------------------------------------------
-   
-   
+end
+
+
+function errRate = LDA(designMatrix, stdY)
+
    % -------- Linear Discriminant Analysis --------------------------------
+    global DEBUG
    
-   result = fitcdiscr(designMatrix, stdY);
+   try
+        result = fitcdiscr(designMatrix, stdY);
+   catch EX
+       result = fitcdiscr(designMatrix, stdY, 'discrimType', 'pseudoLinear');
+   end
    ee = crossval(result);
-   allLDA = kfoldLoss(ee, 'mode', 'individual');
+   allLDA = kfoldLoss(ee, 'mode', 'individual', 'folds', 5);
    avgLDA = mean(allLDA);
    
-   disp('-------- Linear Discriminant Analysis --------------------------------');
-   fprintf('\n\terror rate:\t%f\n\n',avgLDA);
-   fprintf('----------------------------------------------------------------------\n\n');
+   if DEBUG
+        disp('-------- Linear Discriminant Analysis --------------------------------');
+        fprintf('\n\terror rate:\t%f\n\n',avgLDA);
+        fprintf('----------------------------------------------------------------------\n\n');
+   end
+        
+   errRate = avgLDA;
    
    % ----------------------------------------------------------------------
-   
-   
+
+end
+
+function errRate = QDA(designMatrix, stdY) 
+
    % -------- Quadratic Discriminant Analysis -----------------------------
+    global DEBUG
    
    % pseudoQuadratic poich? tutte le istanze che per y hanno '-', per la
    % feature g hanno un valore diverso da gg, dunque la varianza di tale
    % insieme ? nulla
    result = fitcdiscr(designMatrix, stdY, 'DiscrimType', 'pseudoQuadratic');
    ee = crossval(result);
-   allQDA = kfoldLoss(ee, 'mode', 'individual');
+   allQDA = kfoldLoss(ee, 'mode', 'individual', 'folds', 5);
    avgQDA = mean(allQDA);
    
-   disp('-------- Quadratic Discriminant Analysis -----------------------------');
-   fprintf('\n\terror rate:\t%f\n\n',avgQDA);
-   fprintf('----------------------------------------------------------------------\n\n');
+   if DEBUG
+        disp('-------- Quadratic Discriminant Analysis -----------------------------');
+        fprintf('\n\terror rate:\t%f\n\n',avgQDA);
+        fprintf('----------------------------------------------------------------------\n\n');
+   end
+        
+   errRate = avgQDA;
    
    % ----------------------------------------------------------------------
-   
-   
-   % trainingSize = 550
-   
-   % trainingX = designMatrix(1:trainingSize, :);
-   % trainingY = stdY(1:trainingSize);
-   % testX = designMatrix(trainingSize:end, :);
-   % testY = stdY(trainingSize:end);
-   
-   % model = logregFit(trainingX, trainingY);
-   % [yhat, prob] = logregPredict(model, testX);
-   % errRateLogReg = 1 - (sum(yhat == testY)/rows(testY))
-   
-   % using 10-fold cross validation
-   %}
+end
+
+function errRate = LLogReg(designMatrix, stdY)
+    % -------- Logistic Regression with Linear Decision Boundary -----------
+    global DEBUG
    
   LOGREG = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST, 0);
    
-
-   % -------- Logistic Regression with Linear Decision Boundary -----------
-   
-   allLogReg = crossval(LOGREG, designMatrix, stdY);
+   allLogReg = crossval(LOGREG, designMatrix, stdY, 'kfold', 5);
    avgLogReg = mean(allLogReg);
    
-   disp('-------- Logistic Regression with Linear Decision Boundary -----------');
-   fprintf('\n\terror rate:\t%f\n\n',avgLogReg);
-   fprintf('----------------------------------------------------------------------\n\n');
+   if DEBUG
+        disp('-------- Logistic Regression with Linear Decision Boundary -----------');
+        fprintf('\n\terror rate:\t%f\n\n',avgLogReg);
+        fprintf('----------------------------------------------------------------------\n\n');
+   end
+   
+   errRate = avgLogReg;
+   
    % ----------------------------------------------------------------------
+end
+
+function quadMatrix = quad(designMatrix)
+    designMatrix2 = designMatrix;
+    
+   [~, features] = size(designMatrix);
    
-   % -------- Logistic Regression with Quadratic Decision Boundary --------
-   
-   designMatrix2 = designMatrix;
-   for i=1:features
+    for i=1:features
        col = designMatrix(:, i);
        matr = col(:, ones(1, features-i+1));
        quadMatrix = designMatrix(:, i:features).*matr;
        designMatrix2 = [designMatrix2, quadMatrix];
-   end
+    end
+    
+    quadMatrix = designMatrix2;
+end
+
+function errRate =  QLogReg(designMatrix, stdY)
+
+   % -------- Logistic Regression with Quadratic Decision Boundary --------
+    global DEBUG
    
-   allLogReg2 = crossval(LOGREG, designMatrix2, stdY);
+  LOGREG = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST, 0);
+   
+   designMatrix2 = quad(designMatrix);
+   
+   allLogReg2 = crossval(LOGREG, designMatrix2, stdY, 'kfold', 5);
    avgLogReg2 = mean(allLogReg2);
    
-   disp('-------- Logistic Regression with Quadratic Decision Boundary --------');
-   fprintf('\n\terror rate:\t%f\n\n',avgLogReg2);
-   fprintf('----------------------------------------------------------------------\n\n');
+   if DEBUG
+        disp('-------- Logistic Regression with Quadratic Decision Boundary --------');
+        fprintf('\n\terror rate:\t%f\n\n',avgLogReg2);
+        fprintf('----------------------------------------------------------------------\n\n');
+   end
+   
+   errRate = avgLogReg2;
    
    % ----------------------------------------------------------------------
-   
-   
-   
+
+end
+
+function [errRate, Blambda] = LLogRegReg(designMatrix, stdY)
+
+
    % Logistic Regression with Linear Decision Boundary and Regularization -
    
    ls = linspace(0,20,500);
@@ -184,7 +313,7 @@ function Validator()
        
        logRegLambda = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST, ls(i));
    
-       allLogRegR = crossval(logRegLambda, designMatrix, stdY);
+       allLogRegR = crossval(logRegLambda, designMatrix, stdY, 'kfold', 5);
        cvL = mean(allLogRegR);
        
        %cvL = cvLambda(designMatrix, stdY, ls(i));
@@ -193,11 +322,18 @@ function Validator()
            avgLogRegR = cvL;
        end
    end
-   avgLogRegR
-   % ----------------------------------------------------------------------
    
+   errRate = avgLogRegR;
+   Blambda = best;
+   % ----------------------------------------------------------------------
+
+end
+
+function errRate = QLogRegReg(designMatrix, stdY)
    
    % Logistic Regression with Quadratic Decision Boundary and Regularization
+   
+   designMatrix2 = quad(designMatrix);
    
    ls = linspace(15,17,10);
    best = 0;
@@ -206,7 +342,7 @@ function Validator()
        
        logRegLambda = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST, ls(i));
    
-       allLogRegR = crossval(logRegLambda, designMatrix2, stdY);
+       allLogRegR = crossval(logRegLambda, designMatrix2, stdY, 'kfold', 5);
        cvL = mean(allLogRegR);
        
        %cvL = cvLambda(designMatrix, stdY, ls(i));
@@ -215,20 +351,11 @@ function Validator()
            avgLogRegR = cvL;
        end
    end
-   avgLogRegR
+   
+   errRate = avgLogRegR;
+   
    % ----------------------------------------------------------------------
-   
-    
-   %{
-   trainingSize = 550;
-   
-   trainingX = designMatrix2(1:trainingSize, :);
-   trainingY = stdY(1:trainingSize);
-   testX = designMatrix2(trainingSize:end, :);
-   testY = stdY(trainingSize:end);
-   
-   logReg(trainingX, trainingY, testX, testY, 15.22);   
-   %}
+
 end
 
 function errRate = logReg(trainingX, trainingY, testX, testY, lambda)
