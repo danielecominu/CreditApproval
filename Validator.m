@@ -1,50 +1,40 @@
 function Validator()
 
     global DEBUG
-    DEBUG = 1;
+    DEBUG = 0;
     
     if DEBUG == 0
         warning('off','last');
     end
     
-   close all;
+    close all;
     
    [X, Y] = loadData();
    
-   START_PCA = 35;
-   END_PCA = 35;
+   START_PCA = 22;
+   END_PCA = 32;
    
    EXECUTIONS = 10;
    
-   POINT_SIZE = 10;
+   POINT_SIZE = 16;
    
    % Principal Component Analysis
    [coeff, X, pcVariance] = pca(X);
    
    pcVariance = pcVariance ./ (pcVariance(1, 1)*5);
    
-  % plot(1:size(pcVariance), pcVariance)
+   plot(1:size(pcVariance), pcVariance)
    hold on
    
    errRates = ones(16, 7, 5);
    
-   LFM = 0;
-   EFM = 1;
-   
-    [tvX, stdY, testX, testY] = divide(X, Y); 
-    model = logregFit(tvX, stdY, 'regType', 'L2', 'lambda', 20);
-    [yhat, prob] = logregPredict(model, testX);
-    err = 1 - (sum(yhat == testY)/rows(testY));
-    
-    fprintf("Final error after training the whole dataset is %f\n", err)
-   %return
    % itero diverse volte gli algoritmi con dataset diversi
    for j=1:EXECUTIONS
        
        % per ottenere sempre dati diversi applico ogni volta una
        % permutazione casuale e prendo solo i primi nonTestSamples samples
-       [tvX, stdY, ~, ~] = divide(X, Y); 
-       
+       [tvX, stdY, ~, ~] = divide(X, Y);
+        
        for c=START_PCA:END_PCA
    %scatter( [20     24      25      26      27      28      29      30      31      32      33      34      35      46], ...
    %         [0.1270 0.1224  0.1179  0.1179  0.1163  0.1149  0.1195  0.1193  0.1178  0.1178  0.1162  0.1194  0.1194  0.1210])
@@ -64,13 +54,8 @@ function Validator()
             errRates(c-START_PCA+1, 3, j) = QDA(designMatrix, stdY);
             errRates(c-START_PCA+1, 4, j) = LLogReg(designMatrix, stdY);
             errRates(c-START_PCA+1, 5, j) = QLogReg(designMatrix, stdY);
-            [errRates(c-START_PCA+1, 6, j), cLambda] = LLogRegReg(designMatrix, stdY);
+            errRates(c-START_PCA+1, 6, j) = LLogRegReg(designMatrix, stdY);
             errRates(c-START_PCA+1, 7, j) = QLogRegReg(designMatrix, stdY);
-            
-            if(errRates(c-START_PCA+1, 6, j) < EFM)
-                EFM = errRates(c-START_PCA+1, 6, j);
-                LFM = cLambda;
-            end
             
             gscatter(ones(7, 1).*c, errRates(c-START_PCA+1, :, j), 1:7, 'ymcrgbk','.......', POINT_SIZE, 'off')
         
@@ -95,11 +80,27 @@ function Validator()
    end
    
    set(gca,'XTick',1:size(pcVariance));
-   legend('Diagonal Linear Discriminant Analysis', 'Linear Discriminant Analysis', ...
+   legend('Features Variance','Diagonal Linear Discriminant Analysis', 'Linear Discriminant Analysis', ...
             'Quadratic Discriminant Analysis', 'Logistic Regression (Linear Boundary)', 'Logistic Regression (Quadratic Boundary)', ...
             'Logistic Regression (Linear Boundary) with Regularization', 'Logistic Regression (Quadratic Boundary) with Regularization');
    
    figure
+   
+   % 20 -> 0.1270
+   % 24 -> 0.1224
+   % 25 -> 0.1179 0.1129
+   % 26 -> 0.1179
+   % 27 -> 0.1163
+   % 28 -> 0.1149
+   % 29 -> 0.1195
+   % 30 -> 0.1193
+   % 31 -> 0.1178
+   % 32 -> 0.1178
+   % 33 -> 0.1162
+   % 34 -> 0.1194
+   % 35 -> 0.1194
+   % without pca -> 0.1210 0.1072
+   % designMatrix = newDesignMatrix(:, 1:25);
    
    
    
@@ -127,10 +128,41 @@ function Validator()
         end
    end
    
+   %return
    
-    model = logregFit(trainingX, trainingY, 'regType', 'L2', 'lambda', LFM);
-    [yhat, prob] = logregPredict(model, testX);
-    err(k) = 1 - (sum(yhat == testY)/rows(testY));
+   %{
+   for i=1:6
+        scatter(stdNumeric(:, i), stdY)
+        title(sprintf('Feature %d', i))
+        figure
+   end
+   %}
+   
+   % trainingSize = 550
+   
+   % trainingX = designMatrix(1:trainingSize, :);
+   % trainingY = stdY(1:trainingSize);
+   % testX = designMatrix(trainingSize:end, :);
+   % testY = stdY(trainingSize:end);
+   
+   % model = logregFit(trainingX, trainingY);
+   % [yhat, prob] = logregPredict(model, testX);
+   % errRateLogReg = 1 - (sum(yhat == testY)/rows(testY))
+   
+   % using 10-fold cross validation
+   %}
+   
+    
+   %{
+   trainingSize = 550;
+   
+   trainingX = designMatrix2(1:trainingSize, :);
+   trainingY = stdY(1:trainingSize);
+   testX = designMatrix2(trainingSize:end, :);
+   testY = stdY(trainingSize:end);
+   
+   logReg(trainingX, trainingY, testX, testY, 15.22);   
+   %}
 end
 
 function [designMatrix, stdY, testX, testY] = divide(X, Y)
@@ -303,7 +335,7 @@ function errRate =  QLogReg(designMatrix, stdY)
 
 end
 
-function [errRate, Blambda] = LLogRegReg(designMatrix, stdY)
+function errRate = LLogRegReg(designMatrix, stdY)
 
 
    % Logistic Regression with Linear Decision Boundary and Regularization -
@@ -326,7 +358,6 @@ function [errRate, Blambda] = LLogRegReg(designMatrix, stdY)
    end
    
    errRate = avgLogRegR;
-   Blambda = best;
    % ----------------------------------------------------------------------
 
 end

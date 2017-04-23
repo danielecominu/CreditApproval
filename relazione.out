@@ -1,0 +1,16 @@
+\BOOKMARK [1][-]{section.1}{Descrizione preliminare}{}% 1
+\BOOKMARK [1][-]{section.2}{Il dataset}{}% 2
+\BOOKMARK [1][-]{section.3}{Manipolazione dei dati}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{One Hot Encoding}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Standardizzazione}{section.3}% 5
+\BOOKMARK [1][-]{section.4}{Principal Component Analysis}{}% 6
+\BOOKMARK [1][-]{section.5}{Visualizzazione dei dati}{}% 7
+\BOOKMARK [1][-]{section.6}{Modelli utilizzati}{}% 8
+\BOOKMARK [1][-]{section.7}{Gaussian Discriminant Analysis}{}% 9
+\BOOKMARK [2][-]{subsection.7.1}{Linear Discriminant Analysis}{section.7}% 10
+\BOOKMARK [2][-]{subsection.7.2}{Quadratic Discriminant Analysis}{section.7}% 11
+\BOOKMARK [1][-]{section.8}{Logistic Regression}{}% 12
+\BOOKMARK [2][-]{subsection.8.1}{Linear Boundary}{section.8}% 13
+\BOOKMARK [2][-]{subsection.8.2}{Quadratic Boundary}{section.8}% 14
+\BOOKMARK [2][-]{subsection.8.3}{Regolarizzazione}{section.8}% 15
+\BOOKMARK [1][-]{section.9}{Bias vs Variance}{}% 16
