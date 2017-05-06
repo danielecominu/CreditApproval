@@ -1,4 +1,4 @@
-function errRate = LLogRegReg(designMatrix, stdY)
+function predictions = LLogRegReg(designMatrix, stdY, testX)
 
 
    % Logistic Regression with Linear Decision Boundary and Regularization -
@@ -20,7 +20,8 @@ function errRate = LLogRegReg(designMatrix, stdY)
        end
    end
    
-   errRate = avgLogRegR;
+   model = logregFit(designMatrix, stdY, 'lambda', best,'regType','L2');
+   [predictions, ~] = logregPredict(model, testX);
    % ----------------------------------------------------------------------
 
 end

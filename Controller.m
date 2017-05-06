@@ -65,13 +65,17 @@ function Controller()
             biasMatrix(:, j, 3) = QDA(designMatrix, stdY, pcaTestX);
             errRates(c-START_PCA+1, 3, j) = ErrRates(biasMatrix(:, j, 3));
             
-            biasMatrix(:, j, 4) = LLogReg(designMatrix, stdY, testX);
+            biasMatrix(:, j, 4) = LLogReg(designMatrix, stdY, pcaTestX);
             errRates(c-START_PCA+1, 4, j) = ErrRates(biasMatrix(:, j, 4));
             
+            biasMatrix(:, j, 5) = QLogReg(designMatrix, stdY, pcaTestX);
+            errRates(c-START_PCA+1, 5, j) = ErrRates(biasMatrix(:, j, 5));
             
-            errRates(c-START_PCA+1, 5, j) = QLogReg(designMatrix, stdY);
-            errRates(c-START_PCA+1, 6, j) = LLogRegReg(designMatrix, stdY);
-            errRates(c-START_PCA+1, 7, j) = QLogRegReg(designMatrix, stdY);
+            biasMatrix(:, j, 6) = LLogRegReg(designMatrix, stdY, pcaTestX);
+            errRates(c-START_PCA+1, 6, j) = ErrRates(biasMatrix(:, j, 6));
+            
+            biasMatrix(:, j, 7) = QLogRegReg(designMatrix, stdY, pcaTestX);
+            errRates(c-START_PCA+1, 7, j) = ErrRates(biasMatrix(:, j, 7));
             
             gscatter(ones(7, 1).*c, errRates(c-START_PCA+1, :, j), 1:7, 'ymcrgbk','.......', POINT_SIZE, 'off')
         

@@ -1,4 +1,4 @@
-function errRate = QLogRegReg(designMatrix, stdY)
+function predictions = QLogRegReg(designMatrix, stdY, testX)
    
    % Logistic Regression with Quadratic Decision Boundary and Regularization
    
@@ -21,8 +21,8 @@ function errRate = QLogRegReg(designMatrix, stdY)
        end
    end
    
-   errRate = avgLogRegR;
-   
+    model = logregFit(designMatrix2, stdY, 'lambda', best,'regType','L2');
+   [predictions, ~] = logregPredict(model, quadMatrix(testX));
    % ----------------------------------------------------------------------
 
 end
