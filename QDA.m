@@ -1,24 +1,16 @@
-function errRate = LDA(designMatrix, stdY)
+function predictions = LDA(designMatrix, stdY, testX)
 
    % -------- Linear Discriminant Analysis --------------------------------
     global DEBUG
    
    try
-        result = fitcdiscr(designMatrix, stdY);
+        model = fitcdiscr(designMatrix, stdY);
    catch EX
-       result = fitcdiscr(designMatrix, stdY, 'discrimType', 'pseudoLinear');
+       model = fitcdiscr(designMatrix, stdY, 'discrimType', 'pseudoLinear');
    end
-   ee = crossval(result);
-   allLDA = kfoldLoss(ee, 'mode', 'individual', 'folds', 5);
-   avgLDA = mean(allLDA);
    
-   if DEBUG
-        disp('-------- Linear Discriminant Analysis --------------------------------');
-        fprintf('\n\terror rate:\t%f\n\n',avgLDA);
-        fprintf('----------------------------------------------------------------------\n\n');
-   end
-        
-   errRate = avgLDA;
+   predictions = predict(model, testX);
+   
    
    % ----------------------------------------------------------------------
 

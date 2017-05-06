@@ -53,22 +53,16 @@ function Controller()
             designMatrix = tvX(:, 1:c);
             pcaTestX = testX(:, 1:c);
             
-            ErrRates = @(xPred) sum(abs(xPred - testY)) / TEST_SIZE;
+            @(xPred) = 
     
             %errRates(c-START_PCA+1, 1, j) = DLDA(designMatrix, stdY, pcaTestX);
             biasMatrix(:, j, 1) = DLDA(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 1, j) = ErrRates(biasMatrix(:, j, 1));
+            errRates(c-START_PCA+1, 1, j) = sum(abs(biasMatrix(:,j,1) - testY)) / TEST_SIZE;
             
             biasMatrix(:, j, 2) = LDA(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 2, j) = ErrRates(biasMatrix(:, j, 2));
-            
-            biasMatrix(:, j, 3) = QDA(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 3, j) = ErrRates(biasMatrix(:, j, 3));
-            
-            biasMatrix(:, j, 4) = LLogReg(designMatrix, stdY, testX);
-            errRates(c-START_PCA+1, 4, j) = ErrRates(biasMatrix(:, j, 4));
-            
-            
+            errRates(c-START_PCA+1, 2, j) = 
+            errRates(c-START_PCA+1, 3, j) = QDA(designMatrix, stdY);
+            errRates(c-START_PCA+1, 4, j) = LLogReg(designMatrix, stdY);
             errRates(c-START_PCA+1, 5, j) = QLogReg(designMatrix, stdY);
             errRates(c-START_PCA+1, 6, j) = LLogRegReg(designMatrix, stdY);
             errRates(c-START_PCA+1, 7, j) = QLogRegReg(designMatrix, stdY);
