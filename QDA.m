@@ -1,25 +1,23 @@
-function errRate = LDA(designMatrix, stdY)
+function errRate = QDA(designMatrix, stdY)
 
-   % -------- Linear Discriminant Analysis --------------------------------
+   % -------- Quadratic Discriminant Analysis -----------------------------
     global DEBUG
-   
-   try
-        result = fitcdiscr(designMatrix, stdY);
-   catch EX
-       result = fitcdiscr(designMatrix, stdY, 'discrimType', 'pseudoLinear');
-   end
+
+   % pseudoQuadratic poich? tutte le istanze che per y hanno '-', per la
+   % feature g hanno un valore diverso da gg, dunque la varianza di tale
+   % insieme ? nulla
+   result = fitcdiscr(designMatrix, stdY, 'DiscrimType', 'pseudoQuadratic');
    ee = crossval(result);
-   allLDA = kfoldLoss(ee, 'mode', 'individual', 'folds', 5);
-   avgLDA = mean(allLDA);
-   
+   allQDA = kfoldLoss(ee, 'mode', 'individual', 'folds', 5);
+   avgQDA = mean(allQDA);
+
    if DEBUG
-        disp('-------- Linear Discriminant Analysis --------------------------------');
-        fprintf('\n\terror rate:\t%f\n\n',avgLDA);
+        disp('-------- Quadratic Discriminant Analysis -----------------------------');
+        fprintf('\n\terror rate:\t%f\n\n',avgQDA);
         fprintf('----------------------------------------------------------------------\n\n');
    end
-        
-   errRate = avgLDA;
-   
-   % ----------------------------------------------------------------------
 
+   errRate = avgQDA;
+
+   % ----------------------------------------------------------------------
 end
