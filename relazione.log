@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.4.15)  6 MAY 2017 12:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.4.15)  6 MAY 2017 12:42
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -436,7 +436,7 @@ Package hyperref Info: Option `colorlinks' set `true' on input line 32.
 LaTeX Warning: Unused global option(s):
     [8pt].
 
-(./relazione.aux)
+No file relazione.aux.
 \openout1 = `relazione.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 42.
@@ -455,7 +455,6 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 42.
 LaTeX Font Info:    ... okay on input line 42.
 LaTeX Info: Redefining \it@ocap on input line 42.
 LaTeX Info: Redefining \it@ccap on input line 42.
-
 (/usr/local/texlive/2016/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count148
@@ -544,6 +543,9 @@ LaTeX Info: Redefining \nameref on input line 42.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
+
+LaTeX Warning: Citation `Dataset' on page 1 undefined on input line 53.
+
 (/usr/local/texlive/2016/texmf-dist/tex/latex/ucs/data/uni-0.def
 File: uni-0.def 2013/05/13 UCS: Unicode data U+0000..U+00FF
 )
@@ -556,7 +558,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 60--61
 
  []
 
-<images/categbw.png, id=74, 688.5725pt x 600.2425pt>
+
+LaTeX Warning: Citation `OneHotEncoding' on page 1 undefined on input line 62.
+
+<images/categbw.png, id=72, 688.5725pt x 600.2425pt>
 File: images/categbw.png Graphic file (type png)
  <use images/categbw.png>
 Package pdftex.def Info: images/categbw.png used on input line 66.
@@ -572,7 +577,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 69--70
 
  []
 
-<images/categvecbw.png, id=76, 526.46687pt x 293.095pt>
+<images/categvecbw.png, id=74, 526.46687pt x 293.095pt>
 File: images/categvecbw.png Graphic file (type png)
 
 <use images/categvecbw.png>
@@ -592,7 +597,7 @@ Underfull \hbox (badness 5217) in paragraph at lines 95--96
 \T1/cmr/m/n/10 per pro-iet-ta-re i cam-pio-ni su un uni-ver-so
  []
 
-<images/pca.png, id=92, 562.1pt x 422.57875pt>
+<images/pca.png, id=89, 562.1pt x 422.57875pt>
 File: images/pca.png Graphic file (type png)
  <use images/pca.png>
 Package pdftex.def Info: images/pca.png used on input line 98.
@@ -615,7 +620,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 134--135
  []
 
 [2 <./images/categvecbw.png> <./images/pca.png>]
-<mcov.png, id=111, 687.56876pt x 554.07pt>
+<mcov.png, id=108, 687.56876pt x 554.07pt>
 File: mcov.png Graphic file (type png)
  <use mcov.png>
 Package pdftex.def Info: mcov.png used on input line 138.
@@ -648,7 +653,7 @@ Overfull \hbox (16.58371pt too wide) detected at line 181
 S/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 ^^V[]\OT1/cmr/m/n/10 )]
  []
 
-<images/mahalanobis.png, id=112, 42.8214pt x 31.86708pt>
+<images/mahalanobis.png, id=109, 42.8214pt x 31.86708pt>
 File: images/mahalanobis.png Graphic file (type png)
 
 <use images/mahalanobis.png>
@@ -661,7 +666,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 See the caption package documentation for explanation.
 
 [3 <./mcov.png (PNG copy)>]
-<images/GDA.jpg, id=126, 224.33812pt x 194.97844pt>
+<images/GDA.jpg, id=123, 224.33812pt x 194.97844pt>
 File: images/GDA.jpg Graphic file (type jpg)
  <use images/GDA.jpg>
 Package pdftex.def Info: images/GDA.jpg used on input line 209.
@@ -672,7 +677,7 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 210.
 See the caption package documentation for explanation.
 
-<images/LDA.jpg, id=127, 319.94531pt x 265.74281pt>
+<images/LDA.jpg, id=124, 319.94531pt x 265.74281pt>
 File: images/LDA.jpg Graphic file (type jpg)
  <use images/LDA.jpg>
 Package pdftex.def Info: images/LDA.jpg used on input line 247.
@@ -689,7 +694,7 @@ Underfull \hbox (badness 7540) in paragraph at lines 261--262
  []
 
 [4 <./images/mahalanobis.png> <./images/GDA.jpg> <./images/LDA.jpg>]
-<images/logL.png, id=147, 393.47pt x 375.4025pt>
+<images/logL.png, id=144, 393.47pt x 375.4025pt>
 File: images/logL.png Graphic file (type png)
  <use images/logL.png>
 Package pdftex.def Info: images/logL.png used on input line 295.
@@ -705,7 +710,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 304--306
 \T1/cmr/m/n/10 Dunque, uti-liz-zan-do una \T1/cmr/bx/n/10 mul-ti-va-ria-te
  []
 
-<images/quadratic.png, id=148, 716.6775pt x 575.14874pt>
+<images/quadratic.png, id=145, 716.6775pt x 575.14874pt>
 File: images/quadratic.png Graphic file (type png)
 
 <use images/quadratic.png>
@@ -734,7 +739,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 328--330
 o al
  []
 
-<images/BiasVariance.png, id=164, 478.78876pt x 459.7175pt>
+<images/BiasVariance.png, id=160, 478.78876pt x 459.7175pt>
 File: images/BiasVariance.png Graphic file (type png)
 
 <use images/BiasVariance.png>
@@ -746,29 +751,36 @@ Package caption Warning: The option `hypcap=true' will be ignored for this
 (caption)                particular \caption on input line 342.
 See the caption package documentation for explanation.
 
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 350.
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 351.
 
 (/usr/local/texlive/2016/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-Overfull \hbox (1.70255pt too wide) in paragraph at lines 352--355
+Overfull \hbox (1.70255pt too wide) in paragraph at lines 353--356
 [][]$\T1/cmtt/m/n/10 https : / / www . quora . com / What-[]is-[]one-[]hot-[]en
 coding-[]and-[]when-[]is-[]it-[]used-[]in-[]data-[]science$[][] 
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 361.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 362.
 [6 <./images/BiasVariance.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 361.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 362.
  (./relazione.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 361.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 361.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 362.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 362.
 Package rerunfilecheck Info: File `relazione.out' has not changed.
 (rerunfilecheck)             Checksum: 3E37DAF1BA1250F22DD196E8AED4877F;1083.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 10062 strings out of 493014
- 145375 string characters out of 6133351
- 282970 words of memory out of 5000000
+ 10060 strings out of 493014
+ 145347 string characters out of 6133351
+ 282801 words of memory out of 5000000
  13399 multiletter control sequences out of 15000+600000
  15035 words of font info for 41 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -793,10 +805,10 @@ f-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2016/texmf-
 dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/local/texlive/2016/texmf-di
 st/fonts/type1/public/cm-super/sfti1000.pfb></usr/local/texlive/2016/texmf-dist
 /fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on relazione.pdf (6 pages, 765412 bytes).
+Output written on relazione.pdf (6 pages, 765601 bytes).
 PDF statistics:
- 255 PDF objects out of 1000 (max. 8388607)
- 211 compressed objects within 3 object streams
+ 253 PDF objects out of 1000 (max. 8388607)
+ 209 compressed objects within 3 object streams
  66 named destinations out of 1000 (max. 500000)
  187 words of extra memory for PDF output out of 10000 (max. 10000000)
 
