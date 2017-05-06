@@ -1,4 +1,4 @@
-function errRate = QLogRegReg(designMatrix, stdY)
+function errRate = QLogRegReg(designMatrix, stdY,testX)
    
    % Logistic Regression with Quadratic Decision Boundary and Regularization
    

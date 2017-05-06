@@ -1,4 +1,4 @@
-function errRate = LLogReg(designMatrix, stdY)
+function errRate = LLogReg(designMatrix, stdY,testX)
     % -------- Logistic Regression with Linear Decision Boundary -----------
     global DEBUG
    

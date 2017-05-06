@@ -60,6 +60,7 @@ function Controller()
    
    VARIANCE_POINT_SIZE = 2400;
    
+   if 0
    for c=START_PCA:END_PCA
        err_rates = squeeze(errRates(c-START_PCA+1, :, :))';
        mean_ = mean(err_rates);
@@ -73,6 +74,7 @@ function Controller()
        gscatter(c, mean_(6), 6, 'b', 'o', VARIANCE_POINT_SIZE*std_(6), 'off');
        gscatter(c, mean_(7), 7, 'k', 'o', VARIANCE_POINT_SIZE*std_(7), 'off');
    % gscatter(START_PCA:END_PCA, mean(err_rates)')
+   end
    end
    
    set(gca,'XTick',1:size(pcVariance));

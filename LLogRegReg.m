@@ -1,4 +1,4 @@
-function errRate = LLogRegReg(designMatrix, stdY)
+function errRate = LLogRegReg(designMatrix, stdY,testX)
 
 
    % Logistic Regression with Linear Decision Boundary and Regularization -
