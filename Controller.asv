@@ -53,29 +53,19 @@ function Controller()
             designMatrix = tvX(:, 1:c);
             pcaTestX = testX(:, 1:c);
             
-            ErrRates = @(xPred) sum(abs(xPred - testY)) / TEST_SIZE;
+            @(xPred) = 
     
             %errRates(c-START_PCA+1, 1, j) = DLDA(designMatrix, stdY, pcaTestX);
             biasMatrix(:, j, 1) = DLDA(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 1, j) = ErrRates(biasMatrix(:, j, 1));
+            errRates(c-START_PCA+1, 1, j) = sum(abs(biasMatrix(:,j,1) - testY)) / TEST_SIZE;
             
             biasMatrix(:, j, 2) = LDA(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 2, j) = ErrRates(biasMatrix(:, j, 2));
-            
-            biasMatrix(:, j, 3) = QDA(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 3, j) = ErrRates(biasMatrix(:, j, 3));
-            
-            biasMatrix(:, j, 4) = LLogReg(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 4, j) = ErrRates(biasMatrix(:, j, 4));
-            
-            biasMatrix(:, j, 5) = QLogReg(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 5, j) = ErrRates(biasMatrix(:, j, 5));
-            
-            biasMatrix(:, j, 6) = LLogRegReg(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 6, j) = ErrRates(biasMatrix(:, j, 6));
-            
-            biasMatrix(:, j, 7) = QLogRegReg(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 7, j) = ErrRates(biasMatrix(:, j, 7));
+            errRates(c-START_PCA+1, 2, j) = 
+            errRates(c-START_PCA+1, 3, j) = QDA(designMatrix, stdY);
+            errRates(c-START_PCA+1, 4, j) = LLogReg(designMatrix, stdY);
+            errRates(c-START_PCA+1, 5, j) = QLogReg(designMatrix, stdY);
+            errRates(c-START_PCA+1, 6, j) = LLogRegReg(designMatrix, stdY);
+            errRates(c-START_PCA+1, 7, j) = QLogRegReg(designMatrix, stdY);
             
             gscatter(ones(7, 1).*c, errRates(c-START_PCA+1, :, j), 1:7, 'ymcrgbk','.......', POINT_SIZE, 'off')
         
@@ -84,7 +74,6 @@ function Controller()
    
    VARIANCE_POINT_SIZE = 2400;
    
-   if 0
    for c=START_PCA:END_PCA
        err_rates = squeeze(errRates(c-START_PCA+1, :, :))';
        mean_ = mean(err_rates);
@@ -98,7 +87,6 @@ function Controller()
        gscatter(c, mean_(6), 6, 'b', 'o', VARIANCE_POINT_SIZE*std_(6), 'off');
        gscatter(c, mean_(7), 7, 'k', 'o', VARIANCE_POINT_SIZE*std_(7), 'off');
    % gscatter(START_PCA:END_PCA, mean(err_rates)')
-   end
    end
    
    set(gca,'XTick',1:size(pcVariance));

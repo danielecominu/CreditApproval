@@ -1,0 +1,16 @@
+function errRate = LDA(designMatrix, stdY)
+
+   % -------- Linear Discriminant Analysis --------------------------------
+    global DEBUG
+   
+   try
+        result = fitcdiscr(designMatrix, stdY);
+   catch EX
+       result = fitcdiscr(designMatrix, stdY, 'discrimType', 'pseudoLinear');
+   end
+   
+   
+   
+   % ----------------------------------------------------------------------
+
+end

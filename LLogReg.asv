@@ -1,0 +1,10 @@
+function predictions = LLogReg(designMatrix, stdY)
+    % -------- Logistic Regression with Linear Decision Boundary -----------
+    global DEBUG
+   
+   LOGREG = @(XTRAIN, YTRAIN, XTEST, YTEST) logReg(XTRAIN, YTRAIN, XTEST, YTEST, 0);
+   model = logregFit(designMatrix, stdY);
+   [predictions, ] = logregPredict(model, testX);
+    
+   % ----------------------------------------------------------------------
+end
