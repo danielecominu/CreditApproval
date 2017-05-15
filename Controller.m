@@ -14,7 +14,7 @@ function Controller()
   
    MODELS = 7;
    
-   POINT_SIZE = 16;
+   POINT_SIZE = 10;
    
    % Principal Component Analysis
    [coeff, X, pcVariance] = pca(X);
@@ -24,12 +24,12 @@ function Controller()
    plot(1:size(pcVariance), pcVariance)
    hold on
    
-   errRates = ones(16, MODELS, 5);
+   errRates = ones(END_PCA - START_PCA + 1, MODELS, EXECUTIONS);
    
    [X,Y, testX, testY] = divide(X, Y, .8);
    
    TEST_SIZE = size(testX,1);
-   biasMatrix = ones(TEST_SIZE, EXECUTIONS, MODELS);
+   biasMatrix = zeros(TEST_SIZE, EXECUTIONS, MODELS);
    
    % itero diverse volte gli algoritmi con dataset diversi
    for j=1:EXECUTIONS
@@ -56,33 +56,63 @@ function Controller()
             ErrRates = @(xPred) sum(abs(xPred - testY)) / TEST_SIZE;
     
             %errRates(c-START_PCA+1, 1, j) = DLDA(designMatrix, stdY, pcaTestX);
-            biasMatrix(:, j, 1) = DLDA(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 1, j) = ErrRates(biasMatrix(:, j, 1));
+            y = DLDA(designMatrix, stdY, pcaTestX);
+            biasMatrix(:, j, 1) = biasMatrix(:, j, 1) + y;
+            errRates(c-START_PCA+1, 1, j) = ErrRates(y);
             
-            biasMatrix(:, j, 2) = LDA(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 2, j) = ErrRates(biasMatrix(:, j, 2));
+            y = LDA(designMatrix, stdY, pcaTestX);
+            biasMatrix(:, j, 2) = biasMatrix(:, j, 2) + y;
+            errRates(c-START_PCA+1, 2, j) = ErrRates(y);
             
-            biasMatrix(:, j, 3) = QDA(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 3, j) = ErrRates(biasMatrix(:, j, 3));
+            y = QDA(designMatrix, stdY, pcaTestX);
+            biasMatrix(:, j, 3) = biasMatrix(:, j, 3) + y; 
+            errRates(c-START_PCA+1, 3, j) = ErrRates(y);
             
-            biasMatrix(:, j, 4) = LLogReg(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 4, j) = ErrRates(biasMatrix(:, j, 4));
+            y = LLogReg(designMatrix, stdY, pcaTestX);
+            biasMatrix(:, j, 4) = biasMatrix(:, j, 4) + y;
+            errRates(c-START_PCA+1, 4, j) = ErrRates(y);
             
-            biasMatrix(:, j, 5) = QLogReg(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 5, j) = ErrRates(biasMatrix(:, j, 5));
+            y = QLogReg(designMatrix, stdY, pcaTestX);
+            biasMatrix(:, j, 5) = biasMatrix(:, j, 5) + y;
+            errRates(c-START_PCA+1, 5, j) = ErrRates(y);
             
-            biasMatrix(:, j, 6) = LLogRegReg(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 6, j) = ErrRates(biasMatrix(:, j, 6));
+            y = LLogRegReg(designMatrix, stdY, pcaTestX);
+            biasMatrix(:, j, 6) = biasMatrix(:, j, 6) + y;
+            errRates(c-START_PCA+1, 6, j) = ErrRates(y);
             
-            biasMatrix(:, j, 7) = QLogRegReg(designMatrix, stdY, pcaTestX);
-            errRates(c-START_PCA+1, 7, j) = ErrRates(biasMatrix(:, j, 7));
+            y = QLogRegReg(designMatrix, stdY, pcaTestX);
+            biasMatrix(:, j, 7) = biasMatrix(:, j, 7) + y;
+            errRates(c-START_PCA+1, 7, j) = ErrRates(y);
             
-            gscatter(ones(7, 1).*c, errRates(c-START_PCA+1, :, j), 1:7, 'ymcrgbk','.......', POINT_SIZE, 'off')
+            gscatter(ones(MODELS).*c, errRates(c-START_PCA+1, :, j), 1:MODELS, 'gmcrybk','.......', POINT_SIZE, 'off')
         
        end
    end
+    
+   biasMatrix(:,:,:) = biasMatrix(:,:,:) ./ (END_PCA - START_PCA +1); 
+   bias = zeros(TEST_SIZE, MODELS);
+   variance = zeros(TEST_SIZE, MODELS);
    
-   VARIANCE_POINT_SIZE = 2400;
+   for m=1:MODELS
+       meanP = mean(biasMatrix(:,:,m), 2);
+       bias(:, m) = meanP - testY; %media sulle righe !
+       variance(:,m) = mean((biasMatrix(:,:,m) - meanP).^2,2);
+       
+   end
+   
+   VARIANCE_POINT_SIZE = 5500;
+   
+   biasF = mean(bias)
+   varianceF = mean(variance)
+   figure
+   hold on
+   gscatter((1:7), biasF, 1:7, 'gmcrybk','.......', POINT_SIZE, 'off')
+   gscatter((1:7), biasF, 1:7, 'gmcrybk','ooooooo', VARIANCE_POINT_SIZE*max(varianceF, 0.0001), 'off')
+   legend('Diagonal Linear Discriminant Analysis', 'Linear Discriminant Analysis', ...
+            'Quadratic Discriminant Analysis', 'Logistic Regression (Linear Boundary)', 'Logistic Regression (Quadratic Boundary)', ...
+            'Logistic Regression (Linear Boundary) with Regularization', 'Logistic Regression (Quadratic Boundary) with Regularization');
+   
+   figure
    
    if 0
    for c=START_PCA:END_PCA
@@ -90,11 +120,11 @@ function Controller()
        mean_ = mean(err_rates);
        std_ = std(err_rates);
        
-       gscatter(c, mean_(1), 1, 'y', 'o', VARIANCE_POINT_SIZE*std_(1), 'off');
+       gscatter(c, mean_(1), 1, 'g', 'o', VARIANCE_POINT_SIZE*std_(1), 'off');
        gscatter(c, mean_(2), 2, 'm', 'o', VARIANCE_POINT_SIZE*std_(2), 'off');
        gscatter(c, mean_(3), 3, 'c', 'o', VARIANCE_POINT_SIZE*std_(3), 'off');
        gscatter(c, mean_(4), 4, 'r', 'o', VARIANCE_POINT_SIZE*std_(4), 'off');
-       gscatter(c, mean_(5), 5, 'g', 'o', VARIANCE_POINT_SIZE*std_(5), 'off');
+       gscatter(c, mean_(5), 5, 'y', 'o', VARIANCE_POINT_SIZE*std_(5), 'off');
        gscatter(c, mean_(6), 6, 'b', 'o', VARIANCE_POINT_SIZE*std_(6), 'off');
        gscatter(c, mean_(7), 7, 'k', 'o', VARIANCE_POINT_SIZE*std_(7), 'off');
    % gscatter(START_PCA:END_PCA, mean(err_rates)')
@@ -102,9 +132,6 @@ function Controller()
    end
    
    set(gca,'XTick',1:size(pcVariance));
-   legend('Features Variance','Diagonal Linear Discriminant Analysis', 'Linear Discriminant Analysis', ...
-            'Quadratic Discriminant Analysis', 'Logistic Regression (Linear Boundary)', 'Logistic Regression (Quadratic Boundary)', ...
-            'Logistic Regression (Linear Boundary) with Regularization', 'Logistic Regression (Quadratic Boundary) with Regularization');
    
    figure
    
