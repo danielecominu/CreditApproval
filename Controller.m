@@ -24,7 +24,7 @@ function Controller()
    plot(1:size(pcVariance), pcVariance)
    hold on
    
-   errRates = ones(END_PCA - START_PCA + 1, MODELS, EXECUTIONS);
+   errRates = ones(END_PCA - START_PCA + 1, EXECUTIONS, MODELS);
    
    [X,Y, testX, testY] = divide(X, Y, .8);
    
@@ -58,33 +58,33 @@ function Controller()
             %errRates(c-START_PCA+1, 1, j) = DLDA(designMatrix, stdY, pcaTestX);
             y = DLDA(designMatrix, stdY, pcaTestX);
             biasMatrix(:, j, 1) = biasMatrix(:, j, 1) + y;
-            errRates(c-START_PCA+1, 1, j) = ErrRates(y);
+            errRates(c-START_PCA+1, j, 1) = ErrRates(y);
             
             y = LDA(designMatrix, stdY, pcaTestX);
             biasMatrix(:, j, 2) = biasMatrix(:, j, 2) + y;
-            errRates(c-START_PCA+1, 2, j) = ErrRates(y);
+            errRates(c-START_PCA+1, j, 2) = ErrRates(y);
             
             y = QDA(designMatrix, stdY, pcaTestX);
             biasMatrix(:, j, 3) = biasMatrix(:, j, 3) + y; 
-            errRates(c-START_PCA+1, 3, j) = ErrRates(y);
+            errRates(c-START_PCA+1, j, 3) = ErrRates(y);
             
             y = LLogReg(designMatrix, stdY, pcaTestX);
             biasMatrix(:, j, 4) = biasMatrix(:, j, 4) + y;
-            errRates(c-START_PCA+1, 4, j) = ErrRates(y);
+            errRates(c-START_PCA+1, j, 4) = ErrRates(y);
             
             y = QLogReg(designMatrix, stdY, pcaTestX);
             biasMatrix(:, j, 5) = biasMatrix(:, j, 5) + y;
-            errRates(c-START_PCA+1, 5, j) = ErrRates(y);
+            errRates(c-START_PCA+1, j, 5) = ErrRates(y);
             
             y = LLogRegReg(designMatrix, stdY, pcaTestX);
             biasMatrix(:, j, 6) = biasMatrix(:, j, 6) + y;
-            errRates(c-START_PCA+1, 6, j) = ErrRates(y);
+            errRates(c-START_PCA+1, j, 6) = ErrRates(y);
             
             y = QLogRegReg(designMatrix, stdY, pcaTestX);
             biasMatrix(:, j, 7) = biasMatrix(:, j, 7) + y;
-            errRates(c-START_PCA+1, 7, j) = ErrRates(y);
+            errRates(c-START_PCA+1, j, 7) = ErrRates(y);
             
-            gscatter(ones(MODELS).*c, errRates(c-START_PCA+1, :, j), 1:MODELS, 'gmcrybk','.......', POINT_SIZE, 'off')
+            gscatter(ones(MODELS).*c, squeeze(errRates(c-START_PCA+1, j, :)), 1:MODELS, 'gmcrybk','.......', POINT_SIZE, 'off')
         
        end
    end
@@ -160,6 +160,15 @@ function Controller()
    margin = 0.005;
    pointSize = 3;
    f = 0;
+   
+   meanM = zeros(7,1);
+   minM = zeros(7,1);
+    for model=1:7
+        fprintf("Modello %d\n", model)
+        meanM(model) = min(mean(errRates(:,:,model), 2))
+        minM(model) = min(min(errRates(:,:,model), [], 2))
+    end
+    
    
    for i=1:numFeatures
         for j=1:numFeatures
