@@ -364,7 +364,9 @@ Nel problema preso in considerazione si può osservare come i modelli più sempl
    \end{tabular}
   \captionof{table}{errori minimi e medi dei modelli utilizzati}
 \end{Table}
-
+\section{Conclusioni}
+Abbiamo notato che almeno in questo particolare esempio, non vi sia una gran differenza tra la scelta di un classificatore generativo, piuttosto che uno discriminativo. La differenza la fa la complessità dell'algoritmo scelto; per il dataset preso in questione, essendo povero di campioni, è stato molto meglio orientarsi su algoritmi che tendono a non utilizzare polinomi di grado troppo elevato e che quindi riescono a generalizzare meglio in questi casi.\\
+Una giustificazione ai valori dell'error rate così elevati, va cercata nella confidenzialità dei dati. Cercando il motivo dell'alta percentuale di errore, abbiamo trovato una relazione da parte di due studenti dell'università di Standford, che utilizzando il nostro stesso dataset con algoritmi molto più complessi come ad esempio le reti neurali, le quali cercano di fittare un classificatore non lineare, sono arrivati ad avere error rate non minori dell' 8\%.
 \end{multicols}
 
 \begin{Figure}
