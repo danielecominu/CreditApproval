@@ -38,13 +38,13 @@
 {\thesubsection.}{1em}{}
 
 \begin{document}
-\title{Comparazione di classificatori in Credit Card Approval}
+\title{Credit Card Approval}
 \author{Valerio Colitta, Daniele Cominu, Alessio Fiorenza}
 \date{Aprile 2017}
 \maketitle
 
 %TODO: inserire un indice con i vari link alle section.%
-
+\url{https://github.com/danielecominu/CreditApproval}
 \begin{multicols}{2}
 
 \section{Descrizione preliminare}
@@ -223,7 +223,7 @@ Assumendo che
 \begin{split}
 &p(y=c|{x}, \theta) \propto  \pi_c e^{-\frac{1}{2}({x} - \mu_{c})^{T}\Sigma^{-1}({x} - \mu_{c})}\\
 &= e^{-\frac{1}{2}x^T\Sigma^{-1}x} e^{\mu_c^T\Sigma^{-1}x-\frac{1}{2}\mu_c^T\Sigma^{-1}\mu_c + \log\pi_c}\\
-&\propto e^{-\frac{1}{2}\mu_c^T\Sigma^{-1}\mu_c + \log\pi_c}
+&\propto e^{\mu_c^T\Sigma^{-1}x-\frac{1}{2}\mu_c^T\Sigma^{-1}\mu_c + \log\pi_c}
 \end{split}
 \end{equation}
 dove il primo termine è stato rimosso poiché non dipende dalla classe di appartenenza; poiché l'unico termine quadratico è stato rimosso, si possono evidenziare i termini $\gamma_c$ e $\beta_c$
@@ -366,7 +366,7 @@ Nel problema preso in considerazione si può osservare come i modelli più sempl
 \end{Table}
 \section{Conclusioni}
 Abbiamo notato che almeno in questo particolare esempio, non vi sia una gran differenza tra la scelta di un classificatore generativo, piuttosto che uno discriminativo. La differenza la fa la complessità dell'algoritmo scelto; per il dataset preso in questione, essendo povero di campioni, è stato molto meglio orientarsi su algoritmi che tendono a non utilizzare polinomi di grado troppo elevato e che quindi riescono a generalizzare meglio in questi casi.\\
-Una giustificazione ai valori dell'error rate così elevati, va cercata nella confidenzialità dei dati. Cercando il motivo dell'alta percentuale di errore, abbiamo trovato una relazione da parte di due studenti dell'università di Standford, che utilizzando il nostro stesso dataset con algoritmi molto più complessi come ad esempio le reti neurali, le quali cercano di fittare un classificatore non lineare, sono arrivati ad avere error rate non minori dell' 8\%.
+Una giustificazione ai valori dell'error rate così elevati, va cercata nella confidenzialità dei dati. Cercando il motivo dell'alta percentuale di errore, abbiamo trovato una relazione da parte di due studenti dell'università di Standford, che utilizzando il nostro stesso dataset con algoritmi molto più complessi come ad esempio le reti neurali, le quali cercano di fittare un classificatore non lineare, sono arrivati ad avere error rate non minori dell' 8\%. \cite{Standford}
 \end{multicols}
 
 \begin{Figure}
@@ -384,6 +384,10 @@ Una giustificazione ai valori dell'error rate così elevati, va cercata nella co
 	Håkon Hapnes Strand \\
 	\emph{One Hot Encoding} \\
 	\url{https://www.quora.com/What-is-one-hot-encoding-and-when-is-it-used-in-data-science}
+\bibitem{Standford}
+	Zhoutong Fu; Zhedi Liu \\
+	\emph{Standford project} \\
+	\url{http://cs229.stanford.edu/proj2014/Zhoutong\%20Fu,\%20Zhedi\%20Liu,\%20Classifier\%20Comparisons\%20On\%20Credit\%20Approval\%20Prediction.pdf}
 	
 \end{thebibliography}
 \end{document}

@@ -1,0 +1,44 @@
+% !TEX encoding = UTF-8 Unicode
+% !TeX spellcheck = it
+\documentclass[a4paper,8pt]{article}
+\usepackage[italian]{babel}
+\usepackage{graphicx}
+\usepackage{blindtext}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[none]{hyphenat}
+\usepackage[margin={1cm,2cm}]{geometry}
+\usepackage{hyperref}
+\usepackage{titlesec}
+
+\begin{document}
+\title{Credit Card Approval}
+\author{Valerio Colitta, Daniele Cominu, Alessio Fiorenza}
+\date{Aprile 2017}
+\maketitle
+
+\begin{itemize}  
+\item Classe di problema affrontato: Supervised, classificazione Binaria\\
+\item Origine del dataset: \cite{Dataset}
+\item Descrizione del vostro vettore delle feature x : \cite{Features} (alcuni valori per alcune xi sono mancanti. Pensavo di riempirle, facendo una media delle altre xi)
+\item Descrizione delle y:  +/- e rappresenta se la carta di credito e’ stata approvata o meno\\
+\item Descrizione sintetica del problema: Stabilire se un utente è elegibile ad avere una carta di credito o meno\\
+\item Tipo di modello applicato:  GDA (tutti i tipi), Logistic Regression (buondary lineare e quadratico) con regolarizzazione L2.\\
+\item Tipo di stima (MLE/MAP/etc) oppure metrica (o metriche) usata per valutare le peformance del vostro : Misclassification error\\
+\item Descrizione sintetica dei risultati ottenuti: Differenze sostanziali tra i classificatori generativi e discriminativi, non ce ne sono. Una differenza si nota solo in algorirmi che presentano un numero di parametri elevati\\
+\item Linguaggio di programmazione utilizzato: MATLAB\\
+\item Libreria o package utilizzati : pmtk3
+\end{itemize}
+
+
+\begin{thebibliography}{10}
+\bibitem{Dataset}
+	John Ross Quinlan \\
+	\emph{Credit Approval Data Set} \\
+	\url{http://archive.ics.uci.edu/ml/datasets/Credit+Approval}
+\bibitem{Features}
+	John Ross Quinlan \\
+	\emph{Credit Approval Data Set} \\
+	\url{ https://archive.ics.uci.edu/ml/machine-learning-databases/credit-screening/crx.names	}
+\end{thebibliography}
+\end{document}
